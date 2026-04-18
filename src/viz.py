@@ -90,26 +90,3 @@ def plot_trajectory_metrics(
     plt.close(fig)
 
 
-def plot_lateralization(
-    labels_true: list[str],
-    labels_pred: list[str],
-    path: str | Path,
-) -> None:
-    labels = ["left", "right", "unk"]
-    mat = np.zeros((3, 3), dtype=int)
-    for t, p in zip(labels_true, labels_pred):
-        if t in labels and p in labels:
-            mat[labels.index(t), labels.index(p)] += 1
-    fig, ax = plt.subplots(figsize=(4.5, 4.5))
-    im = ax.imshow(mat, cmap="Blues")
-    ax.set_xticks(range(3)); ax.set_xticklabels(labels)
-    ax.set_yticks(range(3)); ax.set_yticklabels(labels)
-    ax.set_xlabel("predicted"); ax.set_ylabel("clinical")
-    for i in range(3):
-        for j in range(3):
-            ax.text(j, i, mat[i, j], ha="center", va="center",
-                    color="black" if mat[i, j] < mat.max() / 2 else "white")
-    fig.colorbar(im, ax=ax)
-    fig.tight_layout()
-    fig.savefig(path, dpi=140)
-    plt.close(fig)

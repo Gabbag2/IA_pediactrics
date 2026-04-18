@@ -17,8 +17,7 @@ from src.eval_latent import (  # noqa: E402
     local_variance,
 )
 from src.viz import (  # noqa: E402
-    plot_attribution_heatmap, plot_latent_3d, plot_lateralization,
-    plot_trajectory_metrics,
+    plot_attribution_heatmap, plot_latent_3d, plot_trajectory_metrics,
 )
 
 
@@ -93,31 +92,18 @@ def main() -> None:
                             out_dir / "F3_trajectory.png")
     print(f"  F3 → {out_dir / 'F3_trajectory.png'}")
 
-    # --- F4: lateralisation vs clinical truth --------------------------------
+    # --- Attribution summary (top channels + band totals per patient) -------
     summary_path = attr_dir / "summary.json"
     if summary_path.exists():
         summary = json.loads(summary_path.read_text())
-        plot_lateralization(
-            [s["clinical"] for s in summary],
-            [s["predicted"] for s in summary],
-            out_dir / "F4_lateralization.png",
-        )
-        # Numerical summary
-        hits = sum(
-            1 for s in summary
-            if s["clinical"] in ("left", "right") and s["clinical"] == s["predicted"]
-        )
-        valid = sum(1 for s in summary if s["clinical"] in ("left", "right"))
-        acc = hits / valid if valid else float("nan")
         report = {
             "patients": [s["patient"] for s in summary],
-            "lateralization_accuracy": acc,
             "per_patient": summary,
         }
         (out_dir / "summary.json").write_text(json.dumps(report, indent=2))
-        print(f"  F4 → {out_dir / 'F4_lateralization.png'} (acc={acc:.2f})")
+        print(f"  summary → {out_dir / 'summary.json'}")
     else:
-        print("  [skip F4] no attribution summary found")
+        print("  [skip summary] no attribution file found")
 
 
 if __name__ == "__main__":

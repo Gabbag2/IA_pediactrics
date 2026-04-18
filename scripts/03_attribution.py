@@ -18,10 +18,9 @@ from _bootstrap import setup
 
 REPO = setup()
 
-from src.attribution import attribution_for_patient, lateralization_prediction  # noqa: E402
+from src.attribution import attribution_for_patient  # noqa: E402
 from src.dataset import PatientCache, zscore_per_patient  # noqa: E402
 from src.features import FeatureLayout  # noqa: E402
-from src.model import TrainConfig, fit_hybrid_cebra  # noqa: E402
 
 
 def _load_estimator(ckpt: Path, cfg: dict, X_shape: tuple[int, int]) -> object:
@@ -56,18 +55,6 @@ def _load_estimator(ckpt: Path, cfg: dict, X_shape: tuple[int, int]) -> object:
     return est
 
 
-def _left_right_channels(channels):
-    left, right = [], []
-    for c in channels:
-        first = c.split("-")[0]
-        if first.endswith(("1", "3", "5", "7")):
-            left.append(c)
-        elif first.endswith(("2", "4", "6", "8")):
-            right.append(c)
-        # FZ, CZ, PZ → midline → neither
-    return left, right
-
-
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", default=str(REPO / "configs/default.yaml"))
@@ -95,14 +82,12 @@ def main() -> None:
                           X_shape=(max(64, caches[0].X.shape[0]), n_features))
     attr_device = str(next(est.model_.parameters()).device)
 
-    left_channels, right_channels = _left_right_channels(layout.channels)
-
     results_summary = []
     for cache in caches:
         Z = zscore_per_patient(cache)
         preictal = Z[cache.y_state == 1]
         if len(preictal) < 32:
-            X_attr = Z  # fallback: use the full patient cache
+            X_attr = Z
             note = "fallback_all"
         else:
             X_attr = preictal
@@ -111,7 +96,6 @@ def main() -> None:
         res = attribution_for_patient(
             est=est, X_patient=X_attr, feature_layout=layout,
             behavior_dims=cfg["training"]["behavior_dims"],
-            left_channels=left_channels, right_channels=right_channels,
             device=attr_device,
         )
 
@@ -124,24 +108,24 @@ def main() -> None:
             channel_importance=res.channel_importance,
             plv=res.plv_importance,
             graph=res.graph_importance,
-            hemi_left=np.array(res.hemi_score_left),
-            hemi_right=np.array(res.hemi_score_right),
             feature_names=np.array(layout.feature_names()),
             channels=np.array(layout.channels),
             bands=np.array(layout.bands),
             note=np.array(note),
         )
-        pred = lateralization_prediction(res)
-        truth = cfg["clinical_focus"].get(cache.patient, "unk")
+        # Rank top channels / bands for quick human inspection; no claim
+        # against clinical ground truth is made here.
+        order = np.argsort(-res.channel_importance)
+        top = [(str(layout.channels[i]), float(res.channel_importance[i])) for i in order[:5]]
+        band_totals = {b: float(res.ch_band_map[:, j].sum())
+                       for j, b in enumerate(layout.bands)}
         results_summary.append({
             "patient": cache.patient,
-            "predicted": pred,
-            "clinical": truth,
-            "hemi_left": res.hemi_score_left,
-            "hemi_right": res.hemi_score_right,
             "note": note,
+            "top_channels": top,
+            "band_totals": band_totals,
         })
-        print(f"  [{cache.patient}] {note} pred={pred} vs. clinical={truth}")
+        print(f"  [{cache.patient}] {note}  top={top[:3]}")
 
     summary_path = out_dir / "summary.json"
     summary_path.write_text(json.dumps(results_summary, indent=2))

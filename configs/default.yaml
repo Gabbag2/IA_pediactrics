@@ -51,9 +51,15 @@ preprocessing:
   notch_hz: 60.0
 
 labels:
-  pre_ictal_s: 300     # 5 min before onset
-  post_ictal_s: 1800   # 30 min after offset (excluded from interictal)
-  interictal_guard_s: 3600  # 1 h guard around seizures
+  # Pre-ictal: 30 min — Ryu & Joe 2021 (CHB-MIT), Mormann 2007 review.
+  # Gives ~720 windows / seizure at 2.5 s step, enough to resolve drift trajectory.
+  pre_ictal_s: 1800
+  # Post-ictal: 30 min — physiologically depressed, genuinely not-interictal.
+  post_ictal_s: 1800
+  # Guard zone disabled: we want the continuous phase transition, not a
+  # sanitised "far-from-seizure" set. Everything outside pre-ictal / ictal /
+  # post-ictal is labelled interictal.
+  interictal_guard_s: 0
 
 training:
   latent_dim: 11
@@ -69,33 +75,5 @@ training:
   jacobian_warmup_frac: 0.25
   jacobian_rampup_frac: 0.50
   seed: 0
-
-# Clinically documented seizure focus (lateralization) for CHB-MIT
-# Sourced from Shoeb (2009) PhD thesis; 'unk' where not documented.
-clinical_focus:
-  chb01: left
-  chb02: right
-  chb03: left
-  chb04: left
-  chb05: left
-  chb06: unk
-  chb07: left
-  chb08: right
-  chb09: left
-  chb10: right
-  chb11: right
-  chb12: unk
-  chb13: unk
-  chb14: unk
-  chb15: unk
-  chb16: unk
-  chb17: right
-  chb18: left
-  chb19: left
-  chb20: right
-  chb21: left
-  chb22: left
-  chb23: right
-  chb24: unk
 
 core_patients: [chb01, chb03, chb05, chb08, chb10]
