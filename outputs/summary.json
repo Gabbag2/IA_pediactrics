@@ -1,0 +1,18 @@
+{
+  "patients": [
+    "chb01"
+  ],
+  "lateralization_accuracy": 0.0,
+  "per_patient": [
+    {
+      "patient": "chb01",
+      "predicted": "right",
+      "clinical": "left",
+      "hemi_left": 0.698225736618042,
+      "hemi_right": 0.806428074836731,
+      "hemi_midline": 0.2810879051685333,
+      "asymmetry_index": -0.07191178289315178,
+      "note": "preictal"
+    }
+  ]
+}
