@@ -1,0 +1,101 @@
+data_root: /Volumes/PHILIPS/chbmit
+cache_dir: cache
+outputs_dir: outputs
+
+channels_common:
+  - FP1-F7
+  - F7-T7
+  - T7-P7
+  - P7-O1
+  - FP1-F3
+  - F3-C3
+  - C3-P3
+  - P3-O1
+  - FP2-F4
+  - F4-C4
+  - C4-P4
+  - P4-O2
+  - FP2-F8
+  - F8-T8
+  - T8-P8
+  - P8-O2
+  - FZ-CZ
+  - CZ-PZ
+
+homologous_pairs:
+  - [F7-T7, F8-T8]
+  - [T7-P7, T8-P8]
+  - [P7-O1, P8-O2]
+  - [FP1-F7, FP2-F8]
+  - [FP1-F3, FP2-F4]
+  - [F3-C3, F4-C4]
+  - [C3-P3, C4-P4]
+  - [P3-O1, P4-O2]
+
+bands:
+  delta: [1, 4]
+  theta: [4, 8]
+  alpha: [8, 13]
+  beta:  [13, 30]
+  gamma: [30, 80]
+
+plv_bands: [theta, alpha, beta]
+
+window:
+  length_s: 5.0
+  step_s: 2.5
+
+preprocessing:
+  highpass_hz: 1.0
+  lowpass_hz: 80.0
+  notch_hz: 60.0
+
+labels:
+  pre_ictal_s: 300     # 5 min before onset
+  post_ictal_s: 1800   # 30 min after offset (excluded from interictal)
+  interictal_guard_s: 3600  # 1 h guard around seizures
+
+training:
+  latent_dim: 11
+  behavior_dims: 4
+  time_dims: 7
+  batch_size: 512
+  epochs: 3000
+  learning_rate: 3.0e-4
+  temperature: 1.0
+  time_offset: 10
+  conditional: time_delta
+  jacobian_reg_max: 0.01
+  jacobian_warmup_frac: 0.25
+  jacobian_rampup_frac: 0.50
+  seed: 0
+
+# Clinically documented seizure focus (lateralization) for CHB-MIT
+# Sourced from Shoeb (2009) PhD thesis; 'unk' where not documented.
+clinical_focus:
+  chb01: left
+  chb02: right
+  chb03: left
+  chb04: left
+  chb05: left
+  chb06: unk
+  chb07: left
+  chb08: right
+  chb09: left
+  chb10: right
+  chb11: right
+  chb12: unk
+  chb13: unk
+  chb14: unk
+  chb15: unk
+  chb16: unk
+  chb17: right
+  chb18: left
+  chb19: left
+  chb20: right
+  chb21: left
+  chb22: left
+  chb23: right
+  chb24: unk
+
+core_patients: [chb01, chb03, chb05, chb08, chb10]
