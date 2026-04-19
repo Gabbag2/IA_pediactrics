@@ -64,7 +64,7 @@ def attribution_for_patient(
     est: cebra.CEBRA,
     X_patient: np.ndarray,
     feature_layout,
-    behavior_dims: int = 4,
+    behavior_dims: int = 3,
     device: str | None = None,
 ) -> AttributionResult:
     """Compute per-patient attribution over a set of feature vectors.
@@ -74,7 +74,10 @@ def attribution_for_patient(
     est : trained CEBRA sklearn estimator
     X_patient : (N, F) feature matrix (already z-scored)
     feature_layout : FeatureLayout describing how features map back to (ch, band)
-    behavior_dims : dimensions of the behaviour subspace to reduce over
+    behavior_dims : number of latent rows to average for the behaviour map.
+        For plain CEBRA with ``output_dimension=latent_dim``, pass
+        ``latent_dim`` to average over all rows (default matches the 3-dim
+        Glushanina recipe). Clamps to ``J.shape[0]`` if larger.
     """
     if device is None:
         torch_device = next(est.model_.parameters()).device

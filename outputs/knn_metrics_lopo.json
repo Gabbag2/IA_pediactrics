@@ -1,0 +1,424 @@
+{
+  "mode": "lopo",
+  "k": 5,
+  "patients": [
+    "chb01",
+    "chb03",
+    "chb05",
+    "chb08",
+    "chb10"
+  ],
+  "embedding": "/Volumes/PHILIPS/hackathon_ancds/cache/models/pooled_4858141_embedding.npz",
+  "folds": [
+    {
+      "confusion_matrix": [
+        [
+          49231,
+          1025,
+          15
+        ],
+        [
+          1245,
+          2679,
+          7
+        ],
+        [
+          16,
+          3,
+          175
+        ]
+      ],
+      "per_class": [
+        {
+          "state": "interictal",
+          "precision": 0.9750257466529351,
+          "recall": 0.9793121282648047,
+          "f1": 0.9771642368726616,
+          "support": 50271
+        },
+        {
+          "state": "pre-ictal",
+          "precision": 0.7226868087402212,
+          "recall": 0.6815059781226152,
+          "f1": 0.7014925373134329,
+          "support": 3931
+        },
+        {
+          "state": "ictal",
+          "precision": 0.8883248730964467,
+          "recall": 0.9020618556701031,
+          "f1": 0.8951406649616368,
+          "support": 194
+        }
+      ],
+      "auroc": {
+        "interictal": 0.961620820004063,
+        "pre-ictal": 0.9594600638886642,
+        "ictal": 0.9844054143397151
+      },
+      "detection_ictal_vs_rest": {
+        "tp": 175,
+        "fn": 19,
+        "fp": 22,
+        "tn": 54180,
+        "sensitivity": 0.9020618556701031,
+        "specificity": 0.9995941109184163,
+        "ppv": 0.8883248730964467,
+        "npv": 0.9996494400265687,
+        "balanced_accuracy": 0.9508279832942597
+      },
+      "forecasting_preictal_vs_interictal": {
+        "tp": 2679,
+        "fn": 1252,
+        "fp": 1025,
+        "tn": 49246,
+        "sensitivity": 0.6815059781226152,
+        "specificity": 0.9796105110302162,
+        "ppv": 0.7232721382289417,
+        "npv": 0.9752069388886688,
+        "balanced_accuracy": 0.8305582445764157
+      },
+      "held_out": "chb01"
+    },
+    {
+      "confusion_matrix": [
+        [
+          46014,
+          564,
+          50
+        ],
+        [
+          1095,
+          2345,
+          7
+        ],
+        [
+          29,
+          4,
+          144
+        ]
+      ],
+      "per_class": [
+        {
+          "state": "interictal",
+          "precision": 0.9761551190122618,
+          "recall": 0.9868319464699322,
+          "f1": 0.9814644967258921,
+          "support": 46628
+        },
+        {
+          "state": "pre-ictal",
+          "precision": 0.8050120151047031,
+          "recall": 0.6803017116333043,
+          "f1": 0.7374213836477987,
+          "support": 3447
+        },
+        {
+          "state": "ictal",
+          "precision": 0.7164179104477612,
+          "recall": 0.8135593220338984,
+          "f1": 0.7619047619047619,
+          "support": 177
+        }
+      ],
+      "auroc": {
+        "interictal": 0.9618871885522555,
+        "pre-ictal": 0.9613007035870018,
+        "ictal": 0.9711149659691253
+      },
+      "detection_ictal_vs_rest": {
+        "tp": 144,
+        "fn": 33,
+        "fp": 57,
+        "tn": 50018,
+        "sensitivity": 0.8135593220338984,
+        "specificity": 0.9988617074388417,
+        "ppv": 0.7164179104477612,
+        "npv": 0.9993406725140357,
+        "balanced_accuracy": 0.90621051473637
+      },
+      "forecasting_preictal_vs_interictal": {
+        "tp": 2345,
+        "fn": 1102,
+        "fp": 564,
+        "tn": 46064,
+        "sensitivity": 0.6803017116333043,
+        "specificity": 0.9879042635326414,
+        "ppv": 0.8061189412169131,
+        "npv": 0.976635712165543,
+        "balanced_accuracy": 0.8341029875829729
+      },
+      "held_out": "chb03"
+    },
+    {
+      "confusion_matrix": [
+        [
+          49345,
+          992,
+          29
+        ],
+        [
+          1674,
+          1076,
+          2
+        ],
+        [
+          13,
+          2,
+          219
+        ]
+      ],
+      "per_class": [
+        {
+          "state": "interictal",
+          "precision": 0.9669423107070073,
+          "recall": 0.9797283881983878,
+          "f1": 0.9732933588433696,
+          "support": 50366
+        },
+        {
+          "state": "pre-ictal",
+          "precision": 0.5198067632850242,
+          "recall": 0.39098837209302323,
+          "f1": 0.44628784736623806,
+          "support": 2752
+        },
+        {
+          "state": "ictal",
+          "precision": 0.876,
+          "recall": 0.9358974358974359,
+          "f1": 0.9049586776859504,
+          "support": 234
+        }
+      ],
+      "auroc": {
+        "interictal": 0.8559062564905002,
+        "pre-ictal": 0.8452625291559428,
+        "ictal": 0.98059730263503
+      },
+      "detection_ictal_vs_rest": {
+        "tp": 219,
+        "fn": 15,
+        "fp": 31,
+        "tn": 53087,
+        "sensitivity": 0.9358974358974359,
+        "specificity": 0.9994163936895214,
+        "ppv": 0.876,
+        "npv": 0.9997175247636624,
+        "balanced_accuracy": 0.9676569147934786
+      },
+      "forecasting_preictal_vs_interictal": {
+        "tp": 1076,
+        "fn": 1676,
+        "fp": 992,
+        "tn": 49374,
+        "sensitivity": 0.39098837209302323,
+        "specificity": 0.9803041734503435,
+        "ppv": 0.5203094777562862,
+        "npv": 0.9671694417238001,
+        "balanced_accuracy": 0.6856462727716833
+      },
+      "held_out": "chb05"
+    },
+    {
+      "confusion_matrix": [
+        [
+          21573,
+          1610,
+          19
+        ],
+        [
+          961,
+          2626,
+          3
+        ],
+        [
+          52,
+          6,
+          319
+        ]
+      ],
+      "per_class": [
+        {
+          "state": "interictal",
+          "precision": 0.9551492074736563,
+          "recall": 0.9297905352986812,
+          "f1": 0.9422992923910195,
+          "support": 23202
+        },
+        {
+          "state": "pre-ictal",
+          "precision": 0.6190476190476191,
+          "recall": 0.7314763231197772,
+          "f1": 0.6705822267620021,
+          "support": 3590
+        },
+        {
+          "state": "ictal",
+          "precision": 0.9354838709677419,
+          "recall": 0.8461538461538461,
+          "f1": 0.8885793871866295,
+          "support": 377
+        }
+      ],
+      "auroc": {
+        "interictal": 0.9280125110690913,
+        "pre-ictal": 0.9267800794366262,
+        "ictal": 0.9597788603114434
+      },
+      "detection_ictal_vs_rest": {
+        "tp": 319,
+        "fn": 58,
+        "fp": 22,
+        "tn": 26770,
+        "sensitivity": 0.8461538461538461,
+        "specificity": 0.9991788593610033,
+        "ppv": 0.9354838709677419,
+        "npv": 0.9978380796183093,
+        "balanced_accuracy": 0.9226663527574247
+      },
+      "forecasting_preictal_vs_interictal": {
+        "tp": 2626,
+        "fn": 964,
+        "fp": 1610,
+        "tn": 21592,
+        "sensitivity": 0.7314763231197772,
+        "specificity": 0.9306094302215326,
+        "ppv": 0.6199244570349386,
+        "npv": 0.9572619258733818,
+        "balanced_accuracy": 0.8310428766706549
+      },
+      "held_out": "chb08"
+    },
+    {
+      "confusion_matrix": [
+        [
+          61334,
+          1564,
+          25
+        ],
+        [
+          2344,
+          2516,
+          0
+        ],
+        [
+          13,
+          5,
+          173
+        ]
+      ],
+      "per_class": [
+        {
+          "state": "interictal",
+          "precision": 0.9629932015512396,
+          "recall": 0.9747469128935365,
+          "f1": 0.9688344100968297,
+          "support": 62923
+        },
+        {
+          "state": "pre-ictal",
+          "precision": 0.6159118727050183,
+          "recall": 0.5176954732510288,
+          "f1": 0.5625489100055897,
+          "support": 4860
+        },
+        {
+          "state": "ictal",
+          "precision": 0.8737373737373737,
+          "recall": 0.9057591623036649,
+          "f1": 0.8894601542416453,
+          "support": 191
+        }
+      ],
+      "auroc": {
+        "interictal": 0.8905401432571787,
+        "pre-ictal": 0.887331707625277,
+        "ictal": 0.9684388578179846
+      },
+      "detection_ictal_vs_rest": {
+        "tp": 173,
+        "fn": 18,
+        "fp": 25,
+        "tn": 67758,
+        "sensitivity": 0.9057591623036649,
+        "specificity": 0.9996311759585736,
+        "ppv": 0.8737373737373737,
+        "npv": 0.9997344192634561,
+        "balanced_accuracy": 0.9526951691311193
+      },
+      "forecasting_preictal_vs_interictal": {
+        "tp": 2516,
+        "fn": 2344,
+        "fp": 1564,
+        "tn": 61359,
+        "sensitivity": 0.5176954732510288,
+        "specificity": 0.9751442238926943,
+        "ppv": 0.6166666666666667,
+        "npv": 0.9632042446980519,
+        "balanced_accuracy": 0.7464198485718616
+      },
+      "held_out": "chb10"
+    }
+  ],
+  "summary": {
+    "detection_ictal_vs_rest": {
+      "sensitivity": {
+        "mean": 0.8806863244117897,
+        "std": 0.044344906969988364
+      },
+      "specificity": {
+        "mean": 0.9993364494732713,
+        "std": 0.00028630712247644914
+      },
+      "ppv": {
+        "mean": 0.8579928056498648,
+        "std": 0.0742165762398076
+      },
+      "npv": {
+        "mean": 0.9992560272372064,
+        "std": 0.0007230978901039105
+      },
+      "balanced_accuracy": {
+        "mean": 0.9400113869425304,
+        "std": 0.022295746097321024
+      }
+    },
+    "forecasting_preictal_vs_interictal": {
+      "sensitivity": {
+        "mean": 0.6003935716439497,
+        "std": 0.12715088213029485
+      },
+      "specificity": {
+        "mean": 0.9707145204254856,
+        "std": 0.02046767155853951
+      },
+      "ppv": {
+        "mean": 0.6572583361807492,
+        "std": 0.09829933243147566
+      },
+      "npv": {
+        "mean": 0.9678956526698892,
+        "std": 0.00728637609295161
+      },
+      "balanced_accuracy": {
+        "mean": 0.7855540460347177,
+        "std": 0.059941070884496454
+      }
+    },
+    "auroc": {
+      "interictal": {
+        "mean": 0.9195933838746179,
+        "std": 0.04129429497946931
+      },
+      "pre-ictal": {
+        "mean": 0.9160270167387023,
+        "std": 0.04445851578926075
+      },
+      "ictal": {
+        "mean": 0.9728670802146595,
+        "std": 0.008796249782817435
+      }
+    }
+  }
+}

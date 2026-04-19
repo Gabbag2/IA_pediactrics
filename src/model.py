@@ -1,19 +1,22 @@
-"""xCEBRA-flavoured model wrapper.
+"""CEBRA model wrapper.
 
 Two training paths are exposed:
 
-* :func:`fit_hybrid_cebra` — uses the high-level ``cebra.CEBRA`` sklearn
-  estimator with ``hybrid=True`` so that time-contrastive and behaviour-
-  contrastive objectives are trained jointly on a shared embedding. Fast and
-  well-tested; the resulting torch model is compatible with
-  ``cebra.attribution.init`` for Jacobian-based attribution.
+* :func:`fit_cebra` — uses the high-level ``cebra.CEBRA`` sklearn estimator
+  (``hybrid=False``, ``distance="cosine"``, ``temperature_mode="auto"``) to
+  fit a single 3-dim behaviour-contrastive embedding driven by the discrete
+  state label and ``time_delta`` positive sampling. This is the Glushanina
+  et al. 2025 recipe and the pipeline's active training path. The resulting
+  ``est.model_`` is a plain torch ``nn.Module`` and is directly differentiable
+  for Jacobian attribution (see :mod:`src.attribution`).
 
 * :func:`fit_xcebra_subspace` — builds a
   ``cebra.models.SubspaceMultiobjectiveModel`` that slices the embedding into a
   behaviour subspace (dims ``0..behav_dims``) and a time subspace
   (``behav_dims..latent_dim``) and trains with ``JacobianReg`` on a rampup
-  schedule. This is the faithful xCEBRA recipe; it's slower and more finicky,
-  so we keep it as the stretch-goal path.
+  schedule. This is the faithful xCEBRA recipe from the RatInABox demo; it's
+  slower and more finicky, so we keep it as a dormant stretch-goal path. It
+  is not invoked by any script in :mod:`scripts/`.
 """
 from __future__ import annotations
 
@@ -31,17 +34,19 @@ import cebra.models
 
 @dataclass
 class TrainConfig:
-    latent_dim: int = 11
-    behavior_dims: int = 4
+    latent_dim: int = 3
+    behavior_dims: int = 3
     architecture: str = "offset1-model"
     conditional: str = "time_delta"
+    distance: str = "cosine"
+    temperature_mode: str = "auto"
     temperature: float = 1.0
     time_offsets: int = 10
     epochs: int = 3000
     batch_size: int = 512
     learning_rate: float = 3e-4
     num_hidden_units: int = 128
-    hybrid: bool = True
+    hybrid: bool = False
     device: str = "cuda_if_available"
     seed: int = 0
     jacobian_reg_max: float = 0.0
@@ -78,41 +83,57 @@ def _pick_device(pref: str = "cuda_if_available") -> str:
     return "cpu"
 
 
-def fit_hybrid_cebra(
+def fit_cebra(
     X: np.ndarray,
     y_state: np.ndarray,
     cfg: TrainConfig,
 ) -> cebra.CEBRA:
-    """Train a hybrid CEBRA model on feature matrix ``X`` with behaviour label
+    """Train a plain CEBRA model on feature matrix ``X`` with behaviour label
     ``y_state`` (int array).
 
-    Returns the trained sklearn estimator. Access the underlying torch module
-    via ``model.model_``.
+    Passing ``y_state`` turns this into CEBRA-Behavior: positive pairs are
+    sampled by label (and proximity in time via ``conditional="time_delta"``),
+    negatives from the rest of the batch. All ``latent_dim`` output dims are
+    jointly shaped by that signal — there is no behaviour/time subspace split.
+
+    Returns the trained sklearn estimator. The underlying torch module is
+    exposed as ``est.model_`` and is directly differentiable for Jacobian
+    attribution.
     """
     torch.manual_seed(cfg.seed)
     np.random.seed(cfg.seed)
     device = _pick_device(cfg.device)
 
-    est = cebra.CEBRA(
+    kwargs = dict(
         model_architecture=cfg.architecture,
         batch_size=cfg.batch_size,
         learning_rate=cfg.learning_rate,
-        temperature=cfg.temperature,
         output_dimension=cfg.latent_dim,
         max_iterations=cfg.epochs,
         time_offsets=cfg.time_offsets,
         conditional=cfg.conditional,
+        distance=cfg.distance,
         device=device,
         hybrid=cfg.hybrid,
         num_hidden_units=cfg.num_hidden_units,
         verbose=True,
     )
-    # Hybrid mode (time + behavior) in the sklearn API requires a *continuous*
-    # behaviour label. We pass the state code as a float — the ordinal gap
-    # between interictal(0)/pre-ictal(1)/ictal(2) is enough signal for the
-    # time_delta distribution to group same-state windows together.
+    if cfg.temperature_mode == "auto":
+        kwargs["temperature_mode"] = "auto"
+    else:
+        kwargs["temperature"] = cfg.temperature
+
+    est = cebra.CEBRA(**kwargs)
+    # CEBRA-Behavior in the sklearn API expects a *continuous* label when
+    # ``conditional="time_delta"``. We pass the state code as a float — the
+    # ordinal gap between interictal(0)/pre-ictal(1)/ictal(2) is enough for
+    # the time_delta distribution to group same-state windows together.
     est.fit(X.astype(np.float32), y_state.astype(np.float32))
     return est
+
+
+# Back-compat alias for any caller still importing the old name.
+fit_hybrid_cebra = fit_cebra
 
 
 # ----------------------------------------------------------------------------

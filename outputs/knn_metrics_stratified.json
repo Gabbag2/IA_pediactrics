@@ -1,0 +1,79 @@
+{
+  "mode": "stratified",
+  "k": 5,
+  "patients": [
+    "chb01",
+    "chb03",
+    "chb05",
+    "chb08",
+    "chb10"
+  ],
+  "embedding": "/Volumes/PHILIPS/hackathon_ancds/cache/models/pooled_4858141_embedding.npz",
+  "confusion_matrix": [
+    [
+      45563,
+      1086,
+      29
+    ],
+    [
+      1374,
+      2340,
+      1
+    ],
+    [
+      22,
+      6,
+      206
+    ]
+  ],
+  "per_class": [
+    {
+      "state": "interictal",
+      "precision": 0.970271939351349,
+      "recall": 0.9761129439993145,
+      "f1": 0.9731836773924838,
+      "support": 46678
+    },
+    {
+      "state": "pre-ictal",
+      "precision": 0.6818181818181818,
+      "recall": 0.629878869448183,
+      "f1": 0.6548202042815168,
+      "support": 3715
+    },
+    {
+      "state": "ictal",
+      "precision": 0.8728813559322034,
+      "recall": 0.8803418803418803,
+      "f1": 0.8765957446808511,
+      "support": 234
+    }
+  ],
+  "auroc": {
+    "interictal": 0.9280409310790214,
+    "pre-ictal": 0.9248211909380687,
+    "ictal": 0.9677352674643966
+  },
+  "detection_ictal_vs_rest": {
+    "tp": 206,
+    "fn": 28,
+    "fp": 30,
+    "tn": 50363,
+    "sensitivity": 0.8803418803418803,
+    "specificity": 0.9994046792213204,
+    "ppv": 0.8728813559322034,
+    "npv": 0.9994443452203766,
+    "balanced_accuracy": 0.9398732797816003
+  },
+  "forecasting_preictal_vs_interictal": {
+    "tp": 2340,
+    "fn": 1375,
+    "fp": 1086,
+    "tn": 45592,
+    "sensitivity": 0.629878869448183,
+    "specificity": 0.9767342216890184,
+    "ppv": 0.6830122591943958,
+    "npv": 0.9707241254497839,
+    "balanced_accuracy": 0.8033065455686007
+  }
+}

@@ -32,22 +32,26 @@ def _load_estimator(ckpt: Path, cfg: dict, X_shape: tuple[int, int]) -> object:
     device = _pick_device("cuda_if_available")
 
     tcfg = cfg["training"]
-    est = cebra.CEBRA(
+    kwargs = dict(
         model_architecture="offset1-model",
         output_dimension=tcfg["latent_dim"],
         time_offsets=tcfg["time_offset"],
         conditional=tcfg["conditional"],
-        temperature=tcfg["temperature"],
+        distance=tcfg.get("distance", "cosine"),
         batch_size=tcfg["batch_size"],
         learning_rate=tcfg["learning_rate"],
         max_iterations=1,
-        hybrid=True,
+        hybrid=False,
         num_hidden_units=128,
         device=device,
     )
+    if tcfg.get("temperature_mode", "auto") == "auto":
+        kwargs["temperature_mode"] = "auto"
+    else:
+        kwargs["temperature"] = tcfg.get("temperature", 1.0)
+    est = cebra.CEBRA(**kwargs)
     # A fit is needed to initialise `.model_`; run a minimal 1-step fit.
     dummy_X = np.random.default_rng(0).standard_normal(X_shape).astype(np.float32)
-    # Continuous label required for hybrid mode.
     dummy_y = np.linspace(0, 2, X_shape[0], dtype=np.float32)
     est.fit(dummy_X, dummy_y)
     state = torch.load(ckpt, map_location="cpu")

@@ -35,6 +35,9 @@ cd "${SLURM_SUBMIT_DIR}"
 # Activate environment (adjust if your cluster uses conda instead of venv)
 source "${SLURM_SUBMIT_DIR}/.venv/bin/activate"
 
+if [[ -n "${PATIENTS_FILE:-}" && -f "${PATIENTS_FILE}" ]]; then
+    PATIENTS="$(tr '\n' ',' < "${PATIENTS_FILE}" | sed 's/,\+/,/g; s/,$//')"
+fi
 PATIENTS="${PATIENTS:-chb01,chb03,chb05,chb08,chb10}"
 MAX_ITER="${MAX_ITER:-5000}"
 TAG="${TAG:-pooled_${SLURM_JOB_ID}}"

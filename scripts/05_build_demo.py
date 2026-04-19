@@ -119,19 +119,24 @@ def _load_estimator(ckpt: Path, cfg: dict, n_features: int, ref_n: int) -> objec
     device = _pick_device("cuda_if_available")
 
     tcfg = cfg["training"]
-    est = cebra.CEBRA(
+    kwargs = dict(
         model_architecture="offset1-model",
         output_dimension=tcfg["latent_dim"],
         time_offsets=tcfg["time_offset"],
         conditional=tcfg["conditional"],
-        temperature=tcfg["temperature"],
+        distance=tcfg.get("distance", "cosine"),
         batch_size=tcfg["batch_size"],
         learning_rate=tcfg["learning_rate"],
         max_iterations=1,
-        hybrid=True,
+        hybrid=False,
         num_hidden_units=128,
         device=device,
     )
+    if tcfg.get("temperature_mode", "auto") == "auto":
+        kwargs["temperature_mode"] = "auto"
+    else:
+        kwargs["temperature"] = tcfg.get("temperature", 1.0)
+    est = cebra.CEBRA(**kwargs)
     rng = np.random.default_rng(0)
     dummy_X = rng.standard_normal((max(64, ref_n), n_features)).astype(np.float32)
     dummy_y = np.linspace(0, 2, dummy_X.shape[0], dtype=np.float32)

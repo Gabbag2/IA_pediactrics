@@ -44,9 +44,17 @@ export MKL_NUM_THREADS="${SLURM_CPUS_PER_TASK:-8}"
 export OPENBLAS_NUM_THREADS="${SLURM_CPUS_PER_TASK:-8}"
 export NUMEXPR_NUM_THREADS="${SLURM_CPUS_PER_TASK:-8}"
 
+# Allow a patients file (one comma-separated line, or one patient per line) to
+# sidestep SLURM's --export comma-splitting bug. Pass with:
+#   sbatch --export=ALL,PATIENTS_FILE=configs/patients_all.txt submit_build_features.sh
+if [[ -n "${PATIENTS_FILE:-}" && -f "${PATIENTS_FILE}" ]]; then
+    PATIENTS="$(tr '\n' ',' < "${PATIENTS_FILE}" | sed 's/,\+/,/g; s/,$//')"
+fi
 PATIENTS="${PATIENTS:-chb01,chb03,chb05,chb08,chb10}"
-DATA_ROOT="${DATA_ROOT:-/scratch/$USER/chbmit}"
+DATA_ROOT="${DATA_ROOT:-/scratch/$USER/chbmit/chbmit}"
 CONFIG="${CONFIG:-configs/default.yaml}"
+echo "PATIENTS_COUNT: $(echo "${PATIENTS}" | tr ',' '\n' | wc -l)"
+echo "PATIENTS: ${PATIENTS}"
 
 # Split CSV into an array so $SLURM_ARRAY_TASK_ID picks one patient.
 IFS=',' read -ra PATIENT_ARR <<< "${PATIENTS}"
@@ -56,6 +64,13 @@ if [[ "${idx}" -ge "${#PATIENT_ARR[@]}" ]]; then
     exit 0
 fi
 PATIENT="${PATIENT_ARR[$idx]}"
+
+OUT_NPZ="cache/features/${PATIENT}.npz"
+if [[ "${FORCE:-0}" != "1" && -f "${OUT_NPZ}" ]]; then
+    echo "[skip] ${OUT_NPZ} already exists (set FORCE=1 to rebuild)."
+    ls -lh "${OUT_NPZ}"
+    exit 0
+fi
 
 echo "=== CHB-MIT feature extraction ==="
 echo "Job:       ${SLURM_ARRAY_JOB_ID:-${SLURM_JOB_ID}} [task ${idx}]"

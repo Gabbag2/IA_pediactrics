@@ -6,11 +6,11 @@ from pathlib import Path
 import numpy as np
 
 from .dataset import PooledDataset, balance_classes
-from .model import TrainConfig, fit_hybrid_cebra, save
+from .model import TrainConfig, fit_cebra, save
 
 
 def fit(pooled: PooledDataset, cfg: TrainConfig, out_path: str | Path) -> dict:
-    """Balance classes, fit the hybrid CEBRA model, persist checkpoint.
+    """Balance classes, fit plain CEBRA, persist checkpoint.
 
     Returns a metadata dict with the trained estimator, embedding, and indices.
     """
@@ -18,7 +18,7 @@ def fit(pooled: PooledDataset, cfg: TrainConfig, out_path: str | Path) -> dict:
     X_tr = pooled.X[idx]
     y_tr = pooled.y_state[idx]
 
-    est = fit_hybrid_cebra(X_tr, y_tr, cfg)
+    est = fit_cebra(X_tr, y_tr, cfg)
     save(est, out_path)
 
     # Embed the full pooled set for downstream analysis.

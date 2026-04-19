@@ -1,4 +1,8 @@
-"""Train a hybrid CEBRA model on one or more patients' cached features.
+"""Train a plain CEBRA model on one or more patients' cached features.
+
+Plain CEBRA (Glushanina et al. 2025): 3-dim joint embedding,
+``conditional="time_delta"``, cosine distance, auto temperature. All latent
+dims are jointly shaped by the state label — no behaviour/time subspace.
 
 Example:
     python scripts/02_train_xcebra.py --patients chb01,chb03,chb05,chb08,chb10
@@ -47,13 +51,15 @@ def main() -> None:
         latent_dim=tcfg["latent_dim"],
         behavior_dims=tcfg["behavior_dims"],
         conditional=tcfg["conditional"],
-        temperature=tcfg["temperature"],
+        distance=tcfg.get("distance", "cosine"),
+        temperature_mode=tcfg.get("temperature_mode", "auto"),
+        temperature=tcfg.get("temperature", 1.0),
         time_offsets=tcfg["time_offset"],
         epochs=args.epochs or tcfg["epochs"],
         batch_size=tcfg["batch_size"],
         learning_rate=tcfg["learning_rate"],
         seed=tcfg["seed"],
-        hybrid=True,
+        hybrid=False,
     )
 
     out_dir = REPO / cfg["cache_dir"] / "models"

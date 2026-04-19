@@ -62,15 +62,21 @@ labels:
   interictal_guard_s: 0
 
 training:
-  latent_dim: 11
-  behavior_dims: 4
-  time_dims: 7
+  # Plain CEBRA (Glushanina et al. 2025 recipe): 3-dim joint embedding,
+  # behaviour-contrastive via state labels, time_delta sampling. All 3 dims are
+  # used for attribution — no subspace split.
+  latent_dim: 3
+  behavior_dims: 3
   batch_size: 512
   epochs: 3000
   learning_rate: 3.0e-4
-  temperature: 1.0
+  temperature_mode: auto        # auto-tuned temperature per Schneider 2023
+  temperature: 1.0              # fallback if temperature_mode is overridden
   time_offset: 10
   conditional: time_delta
+  distance: cosine
+  # Jacobian-regularisation knobs — only consumed by the dormant
+  # fit_xcebra_subspace path. Kept for reproducibility of that stretch goal.
   jacobian_reg_max: 0.01
   jacobian_warmup_frac: 0.25
   jacobian_rampup_frac: 0.50
